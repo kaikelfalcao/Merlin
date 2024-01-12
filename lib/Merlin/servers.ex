@@ -14,6 +14,7 @@ defmodule Merlin.Servers do
     state =
       %Merlin.ServerStruct{ups: [], downs: [], servers: servers} |> Merlin.Checker.availbality()
 
+    schedule()
     {:ok, state}
   end
 
@@ -23,12 +24,18 @@ defmodule Merlin.Servers do
   end
 
   @impl true
-  def handle_cast({:push, element}, state) do
-    new_state = [element | state]
+  def handle_info(:schedule_check, state) do
+    new_state = Merlin.Checker.availbality(state)
+    schedule()
     {:noreply, new_state}
   end
 
   def teste do
     GenServer.call(__MODULE__, :servers)
+  end
+
+  def schedule do
+    IO.puts("Schedule work happening in seconds")
+    Process.send_after(self(), :schedule_check, 10_000)
   end
 end

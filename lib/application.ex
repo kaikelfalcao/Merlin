@@ -12,6 +12,7 @@ defmodule Merlin.Application do
 
     HTTPoison.start()
 
+    # :timer.apply_interval(:timer.seconds(15), Merlin.Checker, :schedule_check, ["Ola from Timer"])
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 end
